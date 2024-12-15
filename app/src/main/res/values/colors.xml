@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blackFont">#0F0F0F</color>
+    <color name="whiteFont">#F0F0F0</color>
+    <color name="backgroundcolor">#98A869</color>
+    <color name="primarybutton">#355E38</color>
+    <color name="pressedprimarybutton">#014421</color>
+    <color name="secondarybutton">#D5D5D5</color>
+    <color name="pressedsecondarybutton">#999999</color>
+    <color name="whiteBorder">#D9D9D9</color>
+
+</resources>
