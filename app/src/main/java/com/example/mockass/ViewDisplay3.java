@@ -5,8 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,10 +48,24 @@ public class ViewDisplay3 extends Fragment {
 
         // Handle Next button click
         Button nextButton = view.findViewById(R.id.next_button3);
-        nextButton.setOnClickListener(v -> {
-            // Navigate to next fragment or perform an action
-            Navigation.findNavController(v).navigate(R.id.action_viewDisplayFragment_to_symptomViewHistory_reportFragment);
-        });
+        View.OnClickListener button = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Perform the fragment transaction
+                Fragment viewHistory_reportFragment = new SymptomViewHistory_report4();
+                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+
+                // Replace the current fragment with the new fragment
+                transaction.replace(R.id.fragment_container, viewHistory_reportFragment);
+                transaction.addToBackStack(null); // Optional: adds to the back stack for "Back" navigation
+                transaction.commit(); // Commit the transaction
+
+                // This ensures the tab appearance is updated after navigating
+                ((MainActivity) getActivity()).updateTabAppearance(viewHistory_reportFragment);
+            }
+        };
+
+        nextButton.setOnClickListener(button);
 
         return view;
     }

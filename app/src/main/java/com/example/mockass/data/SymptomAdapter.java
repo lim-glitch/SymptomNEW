@@ -1,22 +1,20 @@
 package com.example.mockass.data;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mockass.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SymptomAdapter extends RecyclerView.Adapter<SymptomAdapter.SymptomViewHolder> {
     private List<SymptomEntity> symptomList;
+    private int selectedPosition =RecyclerView.NO_POSITION;
 
     public SymptomAdapter(List<SymptomEntity> symptomList) {
         this.symptomList = symptomList;
@@ -33,6 +31,22 @@ public class SymptomAdapter extends RecyclerView.Adapter<SymptomAdapter.SymptomV
     public void onBindViewHolder(@NonNull SymptomViewHolder holder, int position) {
         SymptomEntity symptom = symptomList.get(position);
         holder.symptomName.setText(symptom.getName());
+
+        // Change background color based on whether the item is selected
+        if (position == selectedPosition) {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.pressedsecondarybutton));  // Selected color
+        } else {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.secondarybutton));  // Default color
+        }
+
+        // Set OnClickListener to update selected item
+        holder.itemView.setOnClickListener(v -> {
+            int clickedPosition = holder.getAdapterPosition();  // Use getAdapterPosition() to get updated position
+            if (clickedPosition != RecyclerView.NO_POSITION) { // Ensure the position is valid
+                selectedPosition = clickedPosition;
+                notifyDataSetChanged();  // Refresh the RecyclerView to update item backgrounds
+            }
+        });
     }
 
     @Override

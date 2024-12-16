@@ -13,9 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.mockass.data.AppDatabase;
+import com.example.mockass.data.SymptomDao;
 import com.example.mockass.data.SymptomEntity;
 import com.example.mockass.data.SymptomHistoryAdapter;
 import com.example.mockass.data.SymptomViewModel;
+import com.example.mockass.data.SymptomViewModelFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,6 +29,7 @@ import java.util.List;
 public class SymptomViewHistory_report4 extends Fragment {
     private SymptomViewModel symptomViewModel; // ViewModel to fetch symptom data
     private List<String> symptomHistoryList = new ArrayList<>();
+    private SymptomHistoryAdapter adapter;
 
 
     public SymptomViewHistory_report4() {
@@ -35,8 +39,16 @@ public class SymptomViewHistory_report4 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Initialize ViewModel
-        symptomViewModel = new ViewModelProvider(this).get(SymptomViewModel.class);
+
+        //Get SymptomDao from your database instance
+        AppDatabase db = AppDatabase.getInstance(requireActivity().getApplication());
+        SymptomDao symptomDao = db.symptomDao();
+
+        // Step 2: Pass SymptomDao to SymptomViewModelFactory
+        SymptomViewModelFactory factory = new SymptomViewModelFactory(symptomDao);
+
+        // Step 3: Use ViewModelProvider with the factory
+        symptomViewModel = new ViewModelProvider(this, factory).get(SymptomViewModel.class);
     }
 
     @Override
@@ -48,12 +60,12 @@ public class SymptomViewHistory_report4 extends Fragment {
         // Initialize RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.symptomHistoryRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        SymptomHistoryAdapter adapter = new SymptomHistoryAdapter(new ArrayList<>());
+        adapter = new SymptomHistoryAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
         // Observe history data from ViewModel
-        symptomViewModel.getSymptomHistory().observe(getViewLifecycleOwner(), history -> {
-            if (history != null) {
+        /*symptomViewModel.getSymptomHistory().observe(getViewLifecycleOwner(), history -> {
+            if (history != null && !history.isEmpty()) {
                 // Pass the list of SymptomEntity directly to the adapter
                 adapter.updateData(history);
 
@@ -67,8 +79,14 @@ public class SymptomViewHistory_report4 extends Fragment {
                 symptomHistoryList.clear();
                 symptomHistoryList.addAll(symptomNames);
             }
-        });
+        });*/
 
+        // Use mock data to test the RecyclerView UI
+        List<SymptomEntity> mockData = new ArrayList<>();
+        mockData.add(new SymptomEntity("Wheezing"));
+        mockData.add(new SymptomEntity( "Fever"));
+        mockData.add(new SymptomEntity("Nausea"));
+        adapter.updateData(mockData);
 
 
 

@@ -3,7 +3,7 @@ package com.example.mockass;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,11 +52,20 @@ public class RelatedFactorsSelection2 extends Fragment {
         View.OnClickListener button = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(view).navigate(R.id.viewDisplayFragment);
+                // Perform the fragment transaction
+                Fragment viewDisplay3 = new ViewDisplay3();
+                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+
+                // Replace the current fragment with the new fragment
+                transaction.replace(R.id.fragment_container, viewDisplay3);
+                transaction.addToBackStack(null); // Optional: adds to the back stack for "Back" navigation
+                transaction.commit(); // Commit the transaction
+
+                // This ensures the tab appearance is updated after navigating
+                ((MainActivity) getActivity()).updateTabAppearance(viewDisplay3);
             }
         };
         submitButton.setOnClickListener(button);
-
 
         return view;
     }

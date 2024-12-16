@@ -15,11 +15,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 
 import com.example.mockass.data.AppDatabase;
 import com.example.mockass.data.SymptomEntity;
@@ -34,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView tabSymptom, tabFactors, tabCauses;
+    private TextView tabSymptom, tabFactors, tabCauses,tabHistory_Report;
     private ImageView backButton;
     private AppDatabase database;
     private SymptomViewModel symptomViewModel;
@@ -66,27 +64,26 @@ public class MainActivity extends AppCompatActivity {
         backButton = findViewById(R.id.toolbar_backButton);
         backButton.setOnClickListener(view -> onBackPressed());
 
-        // Set up NavController
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
         // Tabs Setup
         tabSymptom = findViewById(R.id.tab_symptom);
         tabFactors = findViewById(R.id.tab_factors);
         tabCauses = findViewById(R.id.tab_causes);
+        tabHistory_Report = findViewById(R.id.tab_history_report);
 
-        tabSymptom.setOnClickListener(v -> navigateToFragment(navController, R.id.symptomSelectionFragment));
-        tabFactors.setOnClickListener(v -> navigateToFragment(navController, R.id.relatedFactorsFragment));
-        tabCauses.setOnClickListener(v -> navigateToFragment(navController, R.id.viewDisplayFragment));
+        // Tab click listeners
+        tabSymptom.setOnClickListener(v -> navigateToFragment(new SymptomSelection()));
+        tabFactors.setOnClickListener(v -> navigateToFragment(new RelatedFactorsSelection2()));
+        tabCauses.setOnClickListener(v -> navigateToFragment(new ViewDisplay3()));
+        tabHistory_Report.setOnClickListener(v -> navigateToFragment(new SymptomViewHistory_report4()));
 
         // Bottom Navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
         // Handle bottom navigation item selection
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.menu_item_home) {
-                navigateToFragment(navController, R.id.symptomSelectionFragment);
+                navigateToFragment(new SymptomSelection());
                 return true;
             }
             return false;
@@ -94,39 +91,49 @@ public class MainActivity extends AppCompatActivity {
 
         // Initially load the symptom fragment
         if (savedInstanceState == null) {
-            navigateToFragment(navController, R.id.symptomSelectionFragment);
+            navigateToFragment(new SymptomSelection());
         }
     }
 
-    private void navigateToFragment(NavController navController, int fragmentId) {
-        navController.navigate(fragmentId);
-        updateTabAppearance(fragmentId);
+    private void navigateToFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment); // Replace the fragment container's content
+        transaction.addToBackStack(null); // Add this transaction to the back stack
+        transaction.commit(); // Commit the transaction
+
+        // Update tab appearance after navigation
+        updateTabAppearance(fragment);
     }
 
-    private void updateTabAppearance(int selectedTabId) {
+    public void updateTabAppearance(Fragment fragment) {
         // Update tab appearance based on selected tab
-        tabSymptom.setTextColor(selectedTabId == R.id.symptomSelectionFragment ?
-                ContextCompat.getColor(this, R.color.whiteFont) :
-                ContextCompat.getColor(this, R.color.blackFont));
-        tabFactors.setTextColor(selectedTabId == R.id.relatedFactorsFragment ?
-                ContextCompat.getColor(this, R.color.whiteFont) :
-                ContextCompat.getColor(this, R.color.blackFont));
-        tabCauses.setTextColor(selectedTabId == R.id.viewDisplayFragment ?
-                ContextCompat.getColor(this, R.color.whiteFont) :
-                ContextCompat.getColor(this, R.color.blackFont));
+        if (fragment instanceof SymptomSelection) {
+            setTabSelected(tabSymptom);
+        } else if (fragment instanceof RelatedFactorsSelection2) {
+            setTabSelected(tabFactors);
+        } else if (fragment instanceof ViewDisplay3) {
+            setTabSelected(tabCauses);
+        }else if(fragment instanceof SymptomViewHistory_report4){
+            setTabSelected(tabHistory_Report);
+        }
+    }
+        private void setTabSelected(TextView selectedTab) {
+            // Reset all tabs
+            resetTab(tabSymptom);
+            resetTab(tabFactors);
+            resetTab(tabCauses);
+            resetTab(tabHistory_Report);
 
-        // Reset the background of the tabs
-        tabSymptom.setBackgroundResource(selectedTabId == R.id.symptomSelectionFragment ?
-                R.color.pressedprimarybutton : 0);
-        tabFactors.setBackgroundResource(selectedTabId == R.id.relatedFactorsFragment ?
-                R.color.pressedprimarybutton : 0);
-        tabCauses.setBackgroundResource(selectedTabId == R.id.viewDisplayFragment ?
-                R.color.pressedprimarybutton : 0);
-
-        // Set bold for the selected tab
-        tabSymptom.setTypeface(null, selectedTabId == R.id.symptomSelectionFragment ? Typeface.BOLD : Typeface.NORMAL);
-        tabFactors.setTypeface(null, selectedTabId == R.id.relatedFactorsFragment ? Typeface.BOLD : Typeface.NORMAL);
-        tabCauses.setTypeface(null, selectedTabId == R.id.viewDisplayFragment ? Typeface.BOLD : Typeface.NORMAL);
+            // Highlight the selected tab
+            selectedTab.setTextColor(ContextCompat.getColor(this, R.color.whiteFont));
+            selectedTab.setBackgroundResource(R.color.pressedprimarybutton);
+            selectedTab.setTypeface(null, Typeface.BOLD);
+        }
+    private void resetTab(TextView tab) {
+        tab.setTextColor(ContextCompat.getColor(this, R.color.blackFont));
+        tab.setBackgroundResource(0);
+        tab.setTypeface(null, Typeface.NORMAL);
     }
 
     private void updateSymptomsUI(List<SymptomEntity> symptoms) {
@@ -136,6 +143,6 @@ public class MainActivity extends AppCompatActivity {
         symptomSelectionFragment.setArguments(bundle);
 
         // Update UI by navigating to symptom fragment
-        navigateToFragment(Navigation.findNavController(this, R.id.nav_host_fragment), R.id.symptomSelectionFragment);
+        navigateToFragment(symptomSelectionFragment);
     }
 }

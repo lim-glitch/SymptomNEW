@@ -9,8 +9,6 @@ import androidx.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
-
 @Entity
 public class SymptomEntity implements Parcelable {
 

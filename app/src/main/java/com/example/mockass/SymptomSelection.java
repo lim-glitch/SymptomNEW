@@ -8,21 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -67,9 +60,20 @@ public class SymptomSelection extends Fragment {
         View.OnClickListener button = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(view).navigate(R.id.relatedFactorsFragment);
+                // Perform the fragment transaction
+                Fragment relatedFactorsFragment = new RelatedFactorsSelection2();
+                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+
+                // Replace the current fragment with the new fragment
+                transaction.replace(R.id.fragment_container, relatedFactorsFragment);
+                transaction.addToBackStack(null); // Optional: adds to the back stack for "Back" navigation
+                transaction.commit(); // Commit the transaction
+
+                // This ensures the tab appearance is updated after navigating
+                ((MainActivity) getActivity()).updateTabAppearance(relatedFactorsFragment);
             }
         };
+
         submitButton.setOnClickListener(button);
 
         return view;

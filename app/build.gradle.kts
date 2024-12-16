@@ -1,3 +1,5 @@
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -34,16 +36,29 @@ android {
 dependencies {
 
     implementation(libs.appcompat)
-    implementation(libs.material)
     implementation(libs.activity)
-    implementation(libs.constraintlayout)
-    implementation(libs.navigation.fragment)
-    implementation(libs.navigation.ui)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    //Room components
-    implementation(libs.room.runtime) // Latest stable version
-    annotationProcessor(libs.room.compiler)
+    // Room components
+    implementation("androidx.room:room-runtime:${rootProject.extra["roomVersion"]}")
+    annotationProcessor("androidx.room:room-compiler:${rootProject.extra["roomVersion"]}")
+    androidTestImplementation("androidx.room:room-testing:${rootProject.extra["roomVersion"]}")
+
+    // Lifecycle components
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1") // Latest version for ViewModel
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1") // Latest version for LiveData
+    implementation("androidx.lifecycle:lifecycle-common-java8:${rootProject.extra["lifecycleVersion"]}")
+
+    // UI components
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
+
+    // Testing dependencies
+    testImplementation(libs.junit)
+    androidTestImplementation("androidx.arch.core:core-testing:${rootProject.extra["coreTestingVersion"]}")
+    androidTestImplementation("androidx.test.espresso:espresso-core:${rootProject.extra["espressoVersion"]}") {
+        exclude(group = "com.android.support",module="support-annotations")
+    }
+    androidTestImplementation(libs.ext.junit)
+
 }
