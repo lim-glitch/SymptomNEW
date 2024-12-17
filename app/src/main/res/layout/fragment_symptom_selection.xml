@@ -10,7 +10,7 @@
         android:id="@+id/symptomTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Select one or more symptoms"
+        android:text="Select one or more symptom"
         android:textStyle="bold"
         android:textSize="18sp"
         android:layout_margin="16dp"

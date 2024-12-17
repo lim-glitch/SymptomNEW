@@ -22,6 +22,6 @@ public interface SymptomDao {
     @Query("SELECT * FROM SymptomEntity")
     LiveData<List<SymptomEntity>> getAllSymptoms();
 
-    @Query("SELECT * FROM SymptomEntity") // Change as needed
-    LiveData<List<SymptomEntity>> getSymptomHistory();
+    @Query("SELECT * FROM SymptomEntity WHERE name IN (:names)")
+    LiveData<List<SymptomEntity>> getSymptomHistory(List<String> names);
 }

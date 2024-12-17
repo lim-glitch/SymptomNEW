@@ -32,6 +32,7 @@ public class SymptomSelection extends Fragment {
 
     private SymptomViewModel symptomViewModel;
     private SymptomAdapter symptomAdapter;
+    private List<String> selectedSymptoms = new ArrayList<>(); // List to track selected symptoms
 
     @Nullable
     @Override
@@ -60,8 +61,13 @@ public class SymptomSelection extends Fragment {
         View.OnClickListener button = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Passing selected symptoms to the next fragment
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("selectedSymptoms", new ArrayList<>(selectedSymptoms));
+
                 // Perform the fragment transaction
                 Fragment relatedFactorsFragment = new RelatedFactorsSelection2();
+                relatedFactorsFragment.setArguments(bundle);
                 FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
 
                 // Replace the current fragment with the new fragment

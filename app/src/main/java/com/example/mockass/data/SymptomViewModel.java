@@ -48,7 +48,7 @@ public class SymptomViewModel extends ViewModel {
         return symptomDao.getAllSymptoms();
     }
 
-    public LiveData<List<SymptomEntity>> getSymptomHistory() {
-        return symptomDao.getSymptomHistory();
+    public LiveData<List<SymptomEntity>> getSymptomHistory(List<String> selectedSymptomNames) {
+        return symptomDao.getSymptomHistory(selectedSymptomNames);
     }
 }

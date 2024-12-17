@@ -19,6 +19,10 @@ public class SymptomHistoryAdapter extends RecyclerView.Adapter<SymptomHistoryAd
         this.symptoms = symptoms;
     }
 
+    // Method to get the list of symptoms
+    public List<SymptomEntity> getSymptoms() {
+        return symptoms;
+    }
     public void updateData(List<SymptomEntity> newSymptoms) {
         this.symptoms = newSymptoms;
         notifyDataSetChanged();

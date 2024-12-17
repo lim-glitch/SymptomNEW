@@ -28,7 +28,6 @@ import java.util.List;
 
 public class SymptomViewHistory_report4 extends Fragment {
     private SymptomViewModel symptomViewModel; // ViewModel to fetch symptom data
-    private List<String> symptomHistoryList = new ArrayList<>();
     private SymptomHistoryAdapter adapter;
 
 
@@ -49,6 +48,9 @@ public class SymptomViewHistory_report4 extends Fragment {
 
         // Step 3: Use ViewModelProvider with the factory
         symptomViewModel = new ViewModelProvider(this, factory).get(SymptomViewModel.class);
+
+        // Insert predefined symptoms (run once)
+        symptomViewModel.insertSymptoms();
     }
 
     @Override
@@ -63,32 +65,29 @@ public class SymptomViewHistory_report4 extends Fragment {
         adapter = new SymptomHistoryAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
-        // Observe history data from ViewModel
-        /*symptomViewModel.getSymptomHistory().observe(getViewLifecycleOwner(), history -> {
-            if (history != null && !history.isEmpty()) {
-                // Pass the list of SymptomEntity directly to the adapter
-                adapter.updateData(history);
+        // Retrieve selected symptoms passed from another fragment
+        /*List<String> selectedSymptoms = getArguments() != null ? getArguments().getStringArrayList("selectedSymptoms") : new ArrayList<>();
 
-                // Create a List<String> for symptom names
-                List<String> symptomNames = new ArrayList<>();
-                for (SymptomEntity symptom : history) {
-                    symptomNames.add(symptom.getName());
+
+        if (selectedSymptoms != null && !selectedSymptoms.isEmpty()) {
+            // Fetch and observe only the selected symptoms
+            symptomViewModel.getSymptomHistory(selectedSymptoms).observe(getViewLifecycleOwner(), history -> {
+                if (history != null) {
+                    adapter.updateData(history);
                 }
-
-                // Update symptomHistoryList with List<String>
-                symptomHistoryList.clear();
-                symptomHistoryList.addAll(symptomNames);
-            }
-        });*/
-
-        // Use mock data to test the RecyclerView UI
-        List<SymptomEntity> mockData = new ArrayList<>();
-        mockData.add(new SymptomEntity("Wheezing"));
-        mockData.add(new SymptomEntity( "Fever"));
-        mockData.add(new SymptomEntity("Nausea"));
-        adapter.updateData(mockData);
-
-
+            });
+        } else {
+            // If no selected symptoms are passed, show a message
+            Toast.makeText(requireContext(), "No symptoms selected!", Toast.LENGTH_SHORT).show();
+        }*/
+        // Create mock symptoms list for testing purposes
+        List<SymptomEntity> mockSymptoms = new ArrayList<>();
+        mockSymptoms.add(new SymptomEntity("Wheezing"));
+        mockSymptoms.add(new SymptomEntity("Constipation"));
+        mockSymptoms.add(new SymptomEntity("Fever"));
+        mockSymptoms.add(new SymptomEntity("Fatigue"));
+        mockSymptoms.add(new SymptomEntity("Nausea"));
+        adapter.updateData(mockSymptoms);
 
         // Generate Report button
         Button generateReportButton = view.findViewById(R.id.generateReportButton);
@@ -108,8 +107,12 @@ public class SymptomViewHistory_report4 extends Fragment {
             // Example content
             writer.write("Symptom History Report\n");
             writer.write("=======================\n");
-            for (String symptom : symptomHistoryList) { // Assume you have a symptomHistoryList
-                writer.write("- " + symptom + "\n");
+            // Get the symptoms from the adapter (which is populated by the ViewModel)
+            List<SymptomEntity> symptomHistory = adapter.getSymptoms();
+
+            // Write each symptom to the report
+            for (SymptomEntity symptom : symptomHistory) {
+                writer.write("- " + symptom.getName() + "\n");
             }
             Toast.makeText(requireContext(), "Report saved at: " + reportFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {

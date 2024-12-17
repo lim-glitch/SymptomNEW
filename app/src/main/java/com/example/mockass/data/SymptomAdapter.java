@@ -10,11 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mockass.R;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SymptomAdapter extends RecyclerView.Adapter<SymptomAdapter.SymptomViewHolder> {
     private List<SymptomEntity> symptomList;
-    private int selectedPosition =RecyclerView.NO_POSITION;
+    private Set<Integer> selectedPositions = new HashSet<>();  // Use a Set to track selected positions
 
     public SymptomAdapter(List<SymptomEntity> symptomList) {
         this.symptomList = symptomList;
@@ -33,17 +36,21 @@ public class SymptomAdapter extends RecyclerView.Adapter<SymptomAdapter.SymptomV
         holder.symptomName.setText(symptom.getName());
 
         // Change background color based on whether the item is selected
-        if (position == selectedPosition) {
+        if (selectedPositions.contains(position)) {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.pressedsecondarybutton));  // Selected color
         } else {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.secondarybutton));  // Default color
         }
 
-        // Set OnClickListener to update selected item
+        // Set OnClickListener to update selected items
         holder.itemView.setOnClickListener(v -> {
-            int clickedPosition = holder.getAdapterPosition();  // Use getAdapterPosition() to get updated position
-            if (clickedPosition != RecyclerView.NO_POSITION) { // Ensure the position is valid
-                selectedPosition = clickedPosition;
+            int clickedPosition = holder.getAdapterPosition();
+            if (clickedPosition != RecyclerView.NO_POSITION) {
+                if (selectedPositions.contains(clickedPosition)) {
+                    selectedPositions.remove(clickedPosition);  // Deselect if already selected
+                } else {
+                    selectedPositions.add(clickedPosition);  // Select if not selected
+                }
                 notifyDataSetChanged();  // Refresh the RecyclerView to update item backgrounds
             }
         });
@@ -56,9 +63,18 @@ public class SymptomAdapter extends RecyclerView.Adapter<SymptomAdapter.SymptomV
 
     // This method is used to update the symptoms list and notify the adapter
     public void updateSymptoms(List<SymptomEntity> symptoms) {
-        this.symptomList.clear();  // Clear the old list
-        this.symptomList.addAll(symptoms);  // Add the new list
-        notifyDataSetChanged();  // Notify adapter of the change
+        this.symptomList.clear();
+        this.symptomList.addAll(symptoms);
+        notifyDataSetChanged();
+    }
+
+    // Get selected symptoms (as SymptomEntity)
+    public List<SymptomEntity> getSelectedSymptoms() {
+        List<SymptomEntity> selectedSymptoms = new ArrayList<>();
+        for (int position : selectedPositions) {
+            selectedSymptoms.add(symptomList.get(position));  // Get the SymptomEntity at the selected position
+        }
+        return selectedSymptoms;
     }
 
     public static class SymptomViewHolder extends RecyclerView.ViewHolder {

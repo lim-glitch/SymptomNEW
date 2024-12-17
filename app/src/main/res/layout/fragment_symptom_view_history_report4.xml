@@ -50,6 +50,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/generateReportButton"
         app:layout_constraintTop_toBottomOf="@id/historyDescriptionTextView"
         tools:listitem="@layout/item_symptom_history_view" />
 
@@ -57,13 +58,12 @@
         android:id="@+id/generateReportButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="128dp"
+        android:layout_marginEnd="128dp"
         android:backgroundTint="@color/primarybutton"
         android:text="Generate Report"
         android:textColor="@color/whiteFont"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/symptomHistoryRecyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_bias="0.914" />
 
 
